@@ -1,0 +1,7 @@
+- name: start mongodb
+  service:
+    name: mongod
+    state: started
+- name: update apt cache
+  ansible.builtin.apt:
+    update_cache: yes

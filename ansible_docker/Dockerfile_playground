@@ -1,0 +1,9 @@
+FROM ubuntu:latest
+
+RUN apt-get update && apt-get install -y --no-install-recommends sudo openssh-server python3 && \
+  apt-get clean && \
+  apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false && \
+  rm -rf /var/lib/apt/lists/* && mkdir -p /run/sshd && sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+  useradd -m -s /bin/bash bilbo && echo "bilbo:1" | chpasswd && adduser bilbo sudo
+
+CMD [ "/usr/sbin/sshd", "-D" ]

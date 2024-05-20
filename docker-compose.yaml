@@ -1,0 +1,18 @@
+version: "3.9"
+services:
+  ansible:
+    build: ansible_docker/
+    container_name: "ansible"
+    command: "sleep infinity"
+    links:
+      - "playground:playground"
+    volumes:
+      - ./config:/etc/ansible
+  playground:
+    build:
+      context: ansible_docker/
+      dockerfile: Dockerfile_playground
+    deploy:
+      replicas: 2
+    ports:
+      - 22
