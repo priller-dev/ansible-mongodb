@@ -4,7 +4,7 @@
     path: /etc/apt/sources.list.d/focal-security.list
     line: "deb http://security.ubuntu.com/ubuntu focal-security main"
     create: yes
-  notify: update apt cache
+
 - name: Install dependencies for mongodb
   ansible.builtin.apt:
     pkg:
@@ -14,6 +14,7 @@
       - apt-transport-https
       - ca-certificates
     update_cache: yes
+
 - name: Download MongoDB GPG key
   ansible.builtin.get_url:
     url: "https://www.mongodb.org/static/pgp/server-7.0.asc"
@@ -22,14 +23,17 @@
 
 - name: Import MongoDB GPG key
   ansible.builtin.shell: "sh -c 'gpg --dearmor < /tmp/mongodb-server-7.0.asc > /usr/share/keyrings/mongodb-server-7.0.gpg'"
+
 - name: Add MongoDB repository
   ansible.builtin.lineinfile:
     path: /etc/apt/sources.list.d/mongodb-org-7.0.list
     line: "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse"
     create: yes
-  notify: update apt cache
+
 - name: Install mongodb
-  apt: pkg=mongodb-org state=latest update_cache=yes
+  apt:
+    pkg: mongodb-org
+    state: latest
+    update_cache: yes
   notify:
-    - update apt cache
     - start mongodb
