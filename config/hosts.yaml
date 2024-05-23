@@ -8,7 +8,11 @@ all:
           ansible_host: ansible_experiments-playground-1
           ansible_user: bilbo
           ansible_password: 1
+          config:
+            logAppend: "false"
         ansible_experiments-playground-2:
           ansible_host: ansible_experiments-playground-2
           ansible_user: bilbo
           ansible_password: 1
+          config:
+            fork: "false"

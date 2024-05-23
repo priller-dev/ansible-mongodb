@@ -1,0 +1,68 @@
+systemLog:
+   destination: {{ merged_config['destination'] }}
+   path: {{ merged_config['path'] }}
+   logAppend: {{ merged_config['logAppend'] }}
+
+processManagement:
+   fork: {{ merged_config['fork'] }}
+
+net:
+   bindIp: {{ merged_config['bindIp'] }}
+   port: {{ merged_config['port'] }}
+   bindIpAll: {{ merged_config['bindIpAll'] }}
+
+security:
+   clusterAuthMode: {{ merged_config['clusterAuthMode'] }}
+   authorization: {{ merged_config['authorization'] }}
+   transitionToAuth: {{ merged_config['transitionToAuth'] }}
+   javascriptEnabled: {{ merged_config['javascriptEnabled'] }}
+{% if merged_config['clusterIpSourceAllowlist'] %}
+   clusterIpSourceAllowlist:
+{% for ip in merged_config['clusterIpSourceAllowlist'] %}
+      - {{ ip }}
+{% endfor %}
+{% endif %}
+
+setParameter:
+   enableLocalhostAuthBypass: {{ merged_config['enableLocalhostAuthBypass'] }}
+
+storage:
+   dbPath: {{ merged_config['dbPath'] }}
+   journal:
+      commitIntervalMs: {{ merged_config['commitIntervalMs'] }}
+   directoryPerDB: {{ merged_config['directoryPerDB'] }}
+   syncPeriodSecs: {{ merged_config['syncPeriodSecs'] }}
+   engine: {{ merged_config['engine'] }}
+{% if merged_config['engine'] == 'wiredTiger' %}
+   wiredTiger:
+      engineConfig:
+        journalCompressor: {{ merged_config['journalCompressor'] }}
+        directoryForIndexes: {{ merged_config['directoryForIndexes'] }}
+        maxCacheOverflowFileSizeGB: {{ merged_config['maxCacheOverflowFileSizeGB'] }}
+      collectionConfig:
+        blockCompressor: {{ merged_config['blockCompressor'] }}
+      indexConfig:
+        prefixCompression: {{ merged_config['prefixCompression'] }}
+{% endif %}
+{% if merged_config['engine'] == 'inMemory' and merged_config['inMemorySizeGB'] %}
+   inMemory:
+      engineConfig:
+        inMemorySizeGB: {{ merged_config['inMemorySizeGB'] }}
+{% endif %}
+
+operationProfiling:
+   mode: {{ merged_config['mode'] }}
+   slowOpThresholdMs: {{ merged_config['slowOpThresholdMs'] }}
+   slowOpSampleRate: {{ merged_config['slowOpSampleRate'] }}
+{% if merged_config['filter'] %}
+   filter: {{ merged_config['filter'] }}
+{% endif %}
+
+sharding:
+{% if merged_config['clusterRole'] %}
+   clusterRole: {{ merged_config['clusterRole'] }}
+{% endif %}
+   archiveMovedChunks: {{ merged_config['archiveMovedChunks'] }}
+{% if merged_config['configDB'] %}
+   configDB: {{ merged_config['configDB'] }}
+{% endif %}

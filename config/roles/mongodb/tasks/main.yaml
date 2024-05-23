@@ -37,3 +37,12 @@
     update_cache: yes
   notify:
     - start mongodb
+
+- name: Merge default config with host-specific config
+  set_fact:
+    merged_config: "{{ default_config | combine(hostvars[inventory_hostname].config | default({})) }}"
+
+- name: Create the mongodb configuration file
+  template:
+    src: mongod.conf.j2
+    dest: /etc/mongod.conf
