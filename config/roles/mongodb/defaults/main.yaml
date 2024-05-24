@@ -1,4 +1,7 @@
 ---
+# full = install + configure
+action_type: full # possible options: full, install, configure, revert
+
 mongodb_version: 7.0
 
 default_config:

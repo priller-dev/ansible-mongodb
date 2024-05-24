@@ -1,48 +1,12 @@
 ---
-- name: Ensure the focal-security repository is added
-  ansible.builtin.lineinfile:
-    path: /etc/apt/sources.list.d/focal-security.list
-    line: "deb http://security.ubuntu.com/ubuntu focal-security main"
-    create: yes
-
-- name: Install dependencies for mongodb
-  ansible.builtin.apt:
-    pkg:
-      - gnupg
-      - libssl1.1
-      - software-properties-common
-      - apt-transport-https
-      - ca-certificates
-    update_cache: yes
-
-- name: Download MongoDB GPG key
-  ansible.builtin.get_url:
-    url: "https://www.mongodb.org/static/pgp/server-{{ mongodb_version }}.asc"
-    dest: "/tmp/mongodb-server-{{ mongodb_version }}.asc"
-    validate_certs: no
-
-- name: Import MongoDB GPG key
-  ansible.builtin.shell: "sh -c 'gpg --dearmor < /tmp/mongodb-server-{{ mongodb_version }}.asc > /usr/share/keyrings/mongodb-server-{{ mongodb_version }}.gpg'"
-
-- name: Add MongoDB repository
-  ansible.builtin.lineinfile:
-    path: /etc/apt/sources.list.d/mongodb-org-{{ mongodb_version }}.list
-    line: "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-{{ mongodb_version }}.gpg ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/{{ mongodb_version }} multiverse"
-    create: yes
-
 - name: Install mongodb
-  apt:
-    pkg: mongodb-org
-    state: latest
-    update_cache: yes
-  notify:
-    - start mongodb
+  include_tasks: install.yaml
+  when: action_type == "install" or action_type == "full"
 
-- name: Merge default config with host-specific config
-  set_fact:
-    merged_config: "{{ default_config | combine(hostvars[inventory_hostname].config | default({})) }}"
+- name: Configure mongodb
+  include_tasks: configure.yaml
+  when: action_type == "configure" or action_type == "full"
 
-- name: Create the mongodb configuration file
-  template:
-    src: mongod.conf.j2
-    dest: /etc/mongod.conf
+- name: Uninstall all mongodb-related files
+  include_tasks: revert.yaml
+  when: action_type == "revert"

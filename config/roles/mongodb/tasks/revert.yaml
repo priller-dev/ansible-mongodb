@@ -1,0 +1,36 @@
+---
+- name: Remove the focal-security repository
+  ansible.builtin.file:
+    path: /etc/apt/sources.list.d/focal-security.list
+    state: absent
+
+- name: Remove MongoDB GPG key file
+  ansible.builtin.file:
+    path: "/tmp/mongodb-server-{{ mongodb_version }}.asc"
+    state: absent
+
+- name: Remove imported MongoDB GPG key
+  ansible.builtin.shell: "rm -f /usr/share/keyrings/mongodb-server-{{ mongodb_version }}.gpg"
+
+- name: Remove MongoDB repository
+  ansible.builtin.file:
+    path: /etc/apt/sources.list.d/mongodb-org-{{ mongodb_version }}.list
+    state: absent
+
+- name: Remove mongodb
+  ansible.builtin.apt:
+    pkg:
+      - mongodb-database-tools
+      - mongodb-mongosh
+      - mongodb-org-database-tools-extra
+      - mongodb-org-database
+      - mongodb-org-mongos
+      - mongodb-org-server
+      - mongodb-org-shell
+      - mongodb-org-tools
+    state: absent
+
+- name: Remove the mongodb configuration file
+  ansible.builtin.file:
+    path: /etc/mongod.conf
+    state: absent
