@@ -1,4 +1,6 @@
 ---
+mongodb_version: 7.0
+
 default_config:
   # System Log
   # destination

@@ -17,17 +17,17 @@
 
 - name: Download MongoDB GPG key
   ansible.builtin.get_url:
-    url: "https://www.mongodb.org/static/pgp/server-7.0.asc"
-    dest: "/tmp/mongodb-server-7.0.asc"
+    url: "https://www.mongodb.org/static/pgp/server-{{ mongodb_version }}.asc"
+    dest: "/tmp/mongodb-server-{{ mongodb_version }}.asc"
     validate_certs: no
 
 - name: Import MongoDB GPG key
-  ansible.builtin.shell: "sh -c 'gpg --dearmor < /tmp/mongodb-server-7.0.asc > /usr/share/keyrings/mongodb-server-7.0.gpg'"
+  ansible.builtin.shell: "sh -c 'gpg --dearmor < /tmp/mongodb-server-{{ mongodb_version }}.asc > /usr/share/keyrings/mongodb-server-{{ mongodb_version }}.gpg'"
 
 - name: Add MongoDB repository
   ansible.builtin.lineinfile:
-    path: /etc/apt/sources.list.d/mongodb-org-7.0.list
-    line: "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse"
+    path: /etc/apt/sources.list.d/mongodb-org-{{ mongodb_version }}.list
+    line: "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-{{ mongodb_version }}.gpg ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/{{ mongodb_version }} multiverse"
     create: yes
 
 - name: Install mongodb

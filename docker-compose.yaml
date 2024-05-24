@@ -12,7 +12,7 @@ services:
     build:
       context: ansible_docker/
       dockerfile: Dockerfile_playground
-    deploy:
-      replicas: 2
+    # deploy:
+    #   replicas: 2
     ports:
       - 22
