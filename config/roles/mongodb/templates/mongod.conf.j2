@@ -1,68 +1,55 @@
-systemLog:
-   destination: {{ merged_config['destination'] }}
-   path: {{ merged_config['path'] }}
-   logAppend: {{ merged_config['logAppend'] }}
+# templates/mongod.conf.j2
 
-processManagement:
-   fork: {{ merged_config['fork'] }}
+# MongoDB Configuration File
+
+systemLog:
+  destination: {{ merged_config['systemLog']['destination'] }}
+  path: {{ merged_config['systemLog']['path'] }}
+  logAppend: {{ merged_config['systemLog']['logAppend'] }}
 
 net:
-   bindIp: {{ merged_config['bindIp'] }}
-   port: {{ merged_config['port'] }}
-   bindIpAll: {{ merged_config['bindIpAll'] }}
+  port: {{ merged_config['net']['port'] }}
+  bindIp: {{ merged_config['net']['bindIp'] }}
+{% if merged_config['net']['bindIpAll'] is defined %}
+  bindIpAll: {{ merged_config['net']['bindIpAll'] }}
+{% endif %}
 
 security:
-   clusterAuthMode: {{ merged_config['clusterAuthMode'] }}
-   authorization: {{ merged_config['authorization'] }}
-   transitionToAuth: {{ merged_config['transitionToAuth'] }}
-   javascriptEnabled: {{ merged_config['javascriptEnabled'] }}
-{% if merged_config['clusterIpSourceAllowlist'] %}
-   clusterIpSourceAllowlist:
-{% for ip in merged_config['clusterIpSourceAllowlist'] %}
-      - {{ ip }}
-{% endfor %}
+{% if merged_config['security']['clusterAuthMode'] is defined %}
+  clusterAuthMode: {{ merged_config['security']['clusterAuthMode'] }}
 {% endif %}
-
-setParameter:
-   enableLocalhostAuthBypass: {{ merged_config['enableLocalhostAuthBypass'] }}
+  authorization: {{ merged_config['security']['authorization'] }}
+{% if merged_config['security']['keyFile'] is defined %}
+  keyFile: {{ merged_config['security']['keyFile'] }}
+{% endif %}
+{% if merged_config['security']['transitionToAuth'] is defined %}
+  transitionToAuth: {{ merged_config['security']['transitionToAuth'] }}
+{% endif %}
+{% if merged_config['security']['javascriptEnabled'] is defined %}
+  javascriptEnabled: {{ merged_config['security']['javascriptEnabled'] }}
+{% endif %}
 
 storage:
-   dbPath: {{ merged_config['dbPath'] }}
-   journal:
-      commitIntervalMs: {{ merged_config['commitIntervalMs'] }}
-   directoryPerDB: {{ merged_config['directoryPerDB'] }}
-   syncPeriodSecs: {{ merged_config['syncPeriodSecs'] }}
-   engine: {{ merged_config['engine'] }}
-{% if merged_config['engine'] == 'wiredTiger' %}
-   wiredTiger:
-      engineConfig:
-        journalCompressor: {{ merged_config['journalCompressor'] }}
-        directoryForIndexes: {{ merged_config['directoryForIndexes'] }}
-        maxCacheOverflowFileSizeGB: {{ merged_config['maxCacheOverflowFileSizeGB'] }}
-      collectionConfig:
-        blockCompressor: {{ merged_config['blockCompressor'] }}
-      indexConfig:
-        prefixCompression: {{ merged_config['prefixCompression'] }}
-{% endif %}
-{% if merged_config['engine'] == 'inMemory' and merged_config['inMemorySizeGB'] %}
-   inMemory:
-      engineConfig:
-        inMemorySizeGB: {{ merged_config['inMemorySizeGB'] }}
-{% endif %}
+  dbPath: {{ merged_config['storage']['dbPath'] }}
+  journal:
+    commitIntervalMs: {{ merged_config['storage']['journal']['commitIntervalMs'] }}
+  directoryPerDB: {{ merged_config['storage']['directoryPerDB'] }}
+  syncPeriodSecs: {{ merged_config['storage']['syncPeriodSecs'] }}
+  engine: {{ merged_config['storage']['engine'] }}
+  wiredTiger:
+    engineConfig:
+      journalCompressor: {{ merged_config['storage']['wiredTiger']['engineConfig']['journalCompressor'] }}
+      directoryForIndexes: {{ merged_config['storage']['wiredTiger']['engineConfig']['directoryForIndexes'] }}
+      maxCacheOverflowFileSizeGB: {{ merged_config['storage']['wiredTiger']['engineConfig']['maxCacheOverflowFileSizeGB'] }}
+    collectionConfig:
+      blockCompressor: {{ merged_config['storage']['wiredTiger']['collectionConfig']['blockCompressor'] }}
+    indexConfig:
+      prefixCompression: {{ merged_config['storage']['wiredTiger']['indexConfig']['prefixCompression'] }}
 
 operationProfiling:
-   mode: {{ merged_config['mode'] }}
-   slowOpThresholdMs: {{ merged_config['slowOpThresholdMs'] }}
-   slowOpSampleRate: {{ merged_config['slowOpSampleRate'] }}
-{% if merged_config['filter'] %}
-   filter: {{ merged_config['filter'] }}
-{% endif %}
+  mode: {{ merged_config['operationProfiling']['mode'] }}
+  slowOpThresholdMs: {{ merged_config['operationProfiling']['slowOpThresholdMs'] }}
+  slowOpSampleRate: {{ merged_config['operationProfiling']['slowOpSampleRate'] }}
 
 sharding:
-{% if merged_config['clusterRole'] %}
-   clusterRole: {{ merged_config['clusterRole'] }}
-{% endif %}
-   archiveMovedChunks: {{ merged_config['archiveMovedChunks'] }}
-{% if merged_config['configDB'] %}
-   configDB: {{ merged_config['configDB'] }}
-{% endif %}
+  archiveMovedChunks: {{ merged_config['sharding']['archiveMovedChunks'] }}

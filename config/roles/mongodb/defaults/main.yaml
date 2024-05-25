@@ -3,52 +3,37 @@
 action_type: full # possible options: full, install, configure, revert
 
 mongodb_version: 7.0
-
 default_config:
-  # System Log
-  # destination
-  destination: file
-  path: "/var/log/mongodb/mongod.log"
-  logAppend: "true"
-
-  # Process Management
-  fork: "true"
-
-  # Network
-  bindIp: 127.0.0.1
-  port: 27017
-  bindIpAll: "false"
-
-  # Security
-  clusterAuthMode: keyFile
-  authorization: disabled
-  transitionToAuth: "false"
-  javascriptEnabled: "true"
-  clusterIpSourceAllowlist: # no default value
-
-  # Set Parameter
-  enableLocalhostAuthBypass: "false"
-
-  # Storage
-  dbPath: "/data/db"
-  commitIntervalMs: 100
-  directoryPerDB: "false"
-  syncPeriodSecs: 60
-  engine: wiredTiger
-  journalCompressor: snappy
-  directoryForIndexes: "false"
-  maxCacheOverflowFileSizeGB: 6
-  blockCompressor: snappy
-  prefixCompression: "true"
-  inMemorySizeGB: # no default value
-
-  # Operation Profiling
-  mode: "off"
-  slowOpThresholdMs: 100
-  slowOpSampleRate: 1.0
-  filter: # no default value
-
-  # Sharding
-  clusterRole: # no default value
-  archiveMovedChunks: "false"
-  configDB: # no default value
+  systemLog:
+    destination: "file"
+    path: "/var/log/mongodb/mongod.log"
+    logAppend: "true"
+  net:
+    port: 27017
+    bindIp: "127.0.0.1"
+    bindIpAll: "false"
+  security:
+    authorization: "disabled"
+    javascriptEnabled: "true"
+  storage:
+    dbPath: "/var/lib/mongodb"
+    journal:
+      commitIntervalMs: 100
+    directoryPerDB: "false"
+    syncPeriodSecs: 60
+    engine: "wiredTiger"
+    wiredTiger:
+      engineConfig:
+        journalCompressor: "snappy"
+        directoryForIndexes: "false"
+        maxCacheOverflowFileSizeGB: 6
+      collectionConfig:
+        blockCompressor: "snappy"
+      indexConfig:
+        prefixCompression: "true"
+  operationProfiling:
+    mode: "off"
+    slowOpThresholdMs: 100
+    slowOpSampleRate: 1.0
+  sharding:
+    archiveMovedChunks: "false"
